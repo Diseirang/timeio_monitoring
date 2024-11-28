@@ -79,6 +79,7 @@ def check_device_name(PC_IP, MACHINE_NAME, LOCATIONS, ip):
     elif ip == PC_IP[8] :
         DEVICE_NAME = MACHINE_NAME[5]
         LOCATION= LOCATIONS[8]
+        
     elif ip == PC_IP[9] :
         DEVICE_NAME = MACHINE_NAME[6]
         LOCATION = LOCATIONS[9]
