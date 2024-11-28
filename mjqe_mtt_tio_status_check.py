@@ -79,9 +79,9 @@ def check_device_name(PC_IP, MACHINE_NAME, LOCATIONS, ip):
     elif ip == PC_IP[8] :
         DEVICE_NAME = MACHINE_NAME[5]
         LOCATION= LOCATIONS[8]
-	elif ip == PC_IP[9] :
-		DEVICE_NAME = MACHINE_NAME[6]
-		LOCATION = LOCATIONS[9]
+    elif ip == PC_IP[9] :
+        DEVICE_NAME = MACHINE_NAME[6]
+        LOCATION = LOCATIONS[9]
         
     return DEVICE_NAME,LOCATION
 
@@ -97,9 +97,9 @@ while True:
         if online_status != last_status[ip]:  # Send notification only if status changes
             MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nDevice name: {DEVICE_NAME}\nLocation: {LOCATION}\nDate: {CURRENT_DATE.strftime('%B %d, %Y') }\nTime: { CURRENT_TIME.strftime('%H:%M:%S %p')}"
             if online_status:
-                print(f"{MESSAGE}\nStatus: UP! 📶✅\n")
+                send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
             else:
-                print(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
+                send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
             last_status[ip] = online_status  # Update the last known status for this IP
 
     time.sleep(CHECK_INTERVAL)  # Wait before the next check
