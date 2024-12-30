@@ -1,11 +1,17 @@
 # Install Library
-  ```pip install pyTelegramBotAPI requests```
+  ```
+  pip install pyTelegramBotAPI requests
+  ```
 # Create the Python Script
-  ```e.g., /home/user/exmaple.py```
+  e.g., /home/user/exmaple.py
 # Make the Python Script Executable
-  ```chmod +x /home/user/exmaple.py```
+  ```
+  chmod +x /home/user/exmaple.py
+  ```
 # Write the Service File
-  ```sudo nano /etc/systemd/system/exmaple.service```
+  ```
+  sudo nano /etc/systemd/system/exmaple.service
+  ```
 # Paste the following content into the service file:
   ```
   [Unit]
