@@ -1,23 +1,27 @@
 # Install Library
   pip install pyTelegramBotAPI requests
-# Create Python File In Your Prefer Directory
-  exmaple.py
-## Make the Python Script Executable
+# Create the Python Script
+  e.g., /home/user/exmaple.py
+# Make the Python Script Executable
+  chmod +x /home/user/exmaple.py
+# Write the Service File
+  sudo nano /etc/systemd/system/exmaple.service
+# Paste the following content into the service file:
+  [Unit]
+  Description=Run My Python Script
+  After=network.target
+  
+  [Service]
+  Type=simple
+  ExecStart=/usr/bin/python3 /home/user/exmaple.py
+  Restart=always
+  User=your-username
+  WorkingDirectory=/home/user
+  
+  [Install]
+  WantedBy=multi-user.target
 
-# Create a Systemd Service File
-    sudo nano /etc/systemd/system/myscript.service
+# Reload Systemd and Enable the Service
 
-### Add some configure to your service file
-    Ex : 
-        Description=Run My Python Script
-        After=network.target
-        
-        [Service]
-        Type=simple
-        ExecStart=/usr/bin/python3 /home/user/myscript.py
-        Restart=always
-        User=your-username
-        WorkingDirectory=/home/user
-        
-        [Install]
-        WantedBy=multi-user.target
+  sudo systemctl daemon-reload
+  sudo systemctl enable myscript.service
