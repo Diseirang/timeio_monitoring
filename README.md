@@ -7,6 +7,7 @@
 # Write the Service File
   sudo nano /etc/systemd/system/exmaple.service
 # Paste the following content into the service file:
+  ```
   [Unit]
   Description=Run My Python Script
   After=network.target
@@ -20,7 +21,7 @@
   
   [Install]
   WantedBy=multi-user.target
-
+  ```
 # Reload Systemd and Enable the Service
 
   sudo systemctl daemon-reload
