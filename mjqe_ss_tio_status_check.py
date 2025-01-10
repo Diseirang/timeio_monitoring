@@ -3,7 +3,6 @@ import requests
 from datetime import date , datetime
 import time
 
-
 # Configuration
 PC_IP = ["10.23.46.27", "10.23.46.26", "10.23.46.37","10.23.46.29"]  # Replace with your PC's IPs or hostnames
 MACHINE_NAME = ["Student Card 1","Student Card 2","Staff TimeIO"]

@@ -64,7 +64,7 @@ while True:
 
             if online_status != last_status[ip]:
                 print(f"{timeout_counter[ip]} : {ip}")
-                MESSAGE = f"🚨Connection Alert🚨\n\nHost Name: {DEVICE_NAME}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nDevice Name: {DEVICE_NAME}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
                 last_status[ip] = online_status        
         else:
@@ -73,6 +73,6 @@ while True:
 
             if timeout_counter[ip] == 5:
                 print(f"{timeout_counter[ip]} : {ip}")
-                MESSAGE = f"🚨Connection Alert🚨\n\nHost Name: {DEVICE_NAME}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nHost Name: {DEVICE_NAME}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = online_status
