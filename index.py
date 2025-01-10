@@ -6,18 +6,18 @@ import configparser
 # Load configuration
 config = configparser.ConfigParser()
 config.read("configure.properties")
+
 BOT_TOKEN = config["DEFAULT"]["BOT_TOKEN"]
 CHAT_ID = config["DEFAULT"]["CHAT_ID"]
 
 # Parse host details from the configuration
-hosts = dict(config["HOSTS"])  # Converts [HOSTS] section into a dictionary
-PC_IP = list(hosts.values())
-HOST_NAMES = list(hosts.keys())
+HOSTS = {key: value for key, value in config["HOSTS"].items() if key.lower() not in ["bot_token", "chat_id"]}
+PC_IP = list(HOSTS.values())
+HOST_NAMES = list(HOSTS.keys())
 
 # State tracking
-last_status = {ip: None for ip in PC_IP}  # Track the status of each IP
-timeout_counter = {ip: 0 for ip in PC_IP}  # Track the number of consecutive timeouts for each IP
-
+last_status = {ip: None for ip in PC_IP}
+timeout_counter = {ip: 0 for ip in PC_IP}
 
 def send_telegram_notification(message):
     """Sends a notification to Telegram."""
@@ -35,7 +35,6 @@ def send_telegram_notification(message):
 def is_device_online(ip):
     """Checks if a device is online."""
     try:
-        # Ping the device
         response = os.system(f"ping -c 1 {ip} > /dev/null 2>&1" if os.name != "nt" else f"ping -n 1 {ip} > nul")
         return response == 0
     except Exception as e:
@@ -60,21 +59,20 @@ while True:
         CURRENT_TIME =  datetime.now().strftime('%H:%M:%S %p')
 
         if online_status:
-            # Reset the timeout counter if the device is online
             if timeout_counter[ip] > 0:
                 timeout_counter[ip] = 0
-            
-            print(timeout_counter[ip])
 
-            if online_status != last_status[ip]:  # Send notification only if status changes
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nDevice name: {DEVICE_NAME} : {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+            if online_status != last_status[ip]:
+                print(f"{timeout_counter[ip]} : {ip}")
+                MESSAGE = f"🚨Connection Alert🚨\n\nHost Name: {DEVICE_NAME}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
                 last_status[ip] = online_status        
         else:
-            # Increment the timeout counter for offline devices
             timeout_counter[ip] += 1
-            print(timeout_counter[ip])
-            if timeout_counter[ip] == 5:  # Send notification only after 5 consecutive timeouts
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nDevice name: {DEVICE_NAME} : {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+            print(f"{timeout_counter[ip]} : {ip}")
+
+            if timeout_counter[ip] == 5:
+                print(f"{timeout_counter[ip]} : {ip}")
+                MESSAGE = f"🚨Connection Alert🚨\n\nHost Name: {DEVICE_NAME}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = online_status
