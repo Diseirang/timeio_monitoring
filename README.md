@@ -43,3 +43,6 @@
   ```
   sudo systemctl status myscript.service
   ```
+
+
+# Required Python 3.12 up to run this project properly
