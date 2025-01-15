@@ -46,3 +46,6 @@
 
 
 # Required Python 3.12 up to run this project properly
+
+# Location to create service file
+sudo nano /etc/systemd/system/service_name.service
