@@ -1,3 +1,5 @@
+# Testing by mengheak
+
 import os
 import requests
 from datetime import date, datetime, timedelta
@@ -19,8 +21,21 @@ HOST_NAMES = list(HOSTS.keys())
 last_status = {ip: None for ip in PC_IP}
 last_seen = {ip: datetime.now() for ip in PC_IP}
 
+# Quiet hours (adjust as needed)
+QUIET_HOURS_START = 23  # 11 PM
+QUIET_HOURS_END = 6  # 6 AM
+
+def is_quiet_hours():
+    """Checks if the current time is within quiet hours."""
+    current_hour = datetime.now().hour
+    return QUIET_HOURS_START <= current_hour or current_hour < QUIET_HOURS_END
+
 def send_telegram_notification(message):
-    """Sends a notification to Telegram."""
+    """Sends a notification to Telegram, unless it's quiet hours."""
+    if is_quiet_hours():
+        print(f"Quiet hours active. Notification suppressed: {message}")
+        return
+
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": message}
     try:
@@ -58,15 +73,12 @@ while True:
         CURRENT_TIME = datetime.now().strftime('%H:%M:%S %p')
 
         if online_status:
-            # Device is online
             if last_status[ip] != True:
                 MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
                 last_status[ip] = True
-            # Update last seen timestamp
             last_seen[ip] = datetime.now()
         else:
-            # Device is offline
             elapsed_time = datetime.now() - last_seen[ip]
             if elapsed_time > timedelta(minutes=1) and last_status[ip] != False:
                 MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
