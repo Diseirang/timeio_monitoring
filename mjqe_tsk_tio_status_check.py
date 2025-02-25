@@ -60,7 +60,7 @@ while True:
         if online_status:
             # Device is online
             if last_status[ip] != True:
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = f"🚨TSK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
                 last_status[ip] = True
             # Update last seen timestamp

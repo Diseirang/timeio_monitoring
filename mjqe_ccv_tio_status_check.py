@@ -60,7 +60,7 @@ while True:
         if online_status:
             # Device is online
             if last_status[ip] != True:
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = f"🚨CCV Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
                 last_status[ip] = True
             # Update last seen timestamp
@@ -69,6 +69,6 @@ while True:
             # Device is offline
             elapsed_time = datetime.now() - last_seen[ip]
             if elapsed_time > timedelta(minutes=1) and last_status[ip] != False:
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = f"🚨CCV Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = False
