@@ -10,6 +10,8 @@ config.read("config_tsk.properties")
 BOT_TOKEN = config["DEFAULT"]["BOT_TOKEN"]
 CHAT_ID = config["DEFAULT"]["CHAT_ID"]
 
+# print(CHAT_ID)
+
 # Parse host details from the configuration
 HOSTS = {key: value for key, value in config["HOSTS"].items() if key.lower() not in ["bot_token", "chat_id"]}
 PC_IP = list(HOSTS.values())
@@ -69,6 +71,6 @@ while True:
             # Device is offline
             elapsed_time = datetime.now() - last_seen[ip]
             if elapsed_time > timedelta(minutes=1) and last_status[ip] != False:
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = f"🚨TSK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = False
