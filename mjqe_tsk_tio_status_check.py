@@ -2,17 +2,15 @@ import os
 import requests
 from datetime import date, datetime, timedelta
 import configparser
+import logging
+import subprocess
 
-# Load configuration
 config = configparser.ConfigParser()
 config.read("config_tsk.properties")
 
 BOT_TOKEN = config["DEFAULT"]["BOT_TOKEN"]
 CHAT_ID = config["DEFAULT"]["CHAT_ID"]
 
-# print(CHAT_ID)
-
-# Parse host details from the configuration
 HOSTS = {key: value for key, value in config["HOSTS"].items() if key.lower() not in ["bot_token", "chat_id"]}
 PC_IP = list(HOSTS.values())
 HOST_NAMES = list(HOSTS.keys())
@@ -21,6 +19,9 @@ HOST_NAMES = list(HOSTS.keys())
 last_status = {ip: None for ip in PC_IP}
 last_seen = {ip: datetime.now() for ip in PC_IP}
 
+os.makedirs("logs", exist_ok=True)
+logging.basicConfig(filename="logs/monitor_tsk.log", level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def send_telegram_notification(message):
     """Sends a notification to Telegram."""
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -28,17 +29,19 @@ def send_telegram_notification(message):
     try:
         response = requests.post(url, data=payload)
         if response.status_code == 200:
-            print(f"Notification sent: {message}")
+            logging.info(f"Notification sent: {message}")
         else:
-            print(f"Failed to send notification: {response.status_code} - {response.text}")
+            logging.error(f"Failed to send notification: {response.status_code} - {response.text}")
     except requests.exceptions.RequestException as e:
-        print(f"Error sending notification: {e}")
+        logging.critical(f"Error sending notification: {e}")
 
 def is_device_online(ip):
-    """Checks if a device is online."""
+    """Checks if a device is online using a ping command (Linux/macOS only)."""
     try:
-        response = os.system(f"ping -c 1 {ip} > /dev/null 2>&1" if os.name != "nt" else f"ping -n 1 {ip} > nul")
-        return response == 0
+        # Run the ping command with -c 1 (Linux/macOS)
+        command = ["ping", "-c", "1", ip]
+        result = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return result.returncode == 0
     except Exception as e:
         print(f"Error pinging {ip}: {e}")
         return False
