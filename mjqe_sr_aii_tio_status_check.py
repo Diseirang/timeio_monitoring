@@ -21,7 +21,7 @@ HOST_NAMES = list(HOSTS.keys())
 last_status = {ip: None for ip in PC_IP}
 last_seen = {ip: datetime.now() for ip in PC_IP}
 
-logging.basicConfig(filename='ais_sr.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='aii_sr.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def send_telegram_notification(message):
     """Sends a notification to Telegram."""
