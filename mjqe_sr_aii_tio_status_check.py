@@ -40,7 +40,6 @@ def is_device_online(ip):
     """Checks if a device is online."""
     try:
         response = os.system(f"ping -c 1 {ip} > /dev/null 2>&1" if os.name != "nt" else f"ping -n 1 {ip} > nul")
-        logging.info(response)
         return response == 0
     except Exception as e:
         logging.error(f"Error pinging {ip}: {e}")
