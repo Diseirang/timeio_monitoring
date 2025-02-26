@@ -2,6 +2,7 @@ import os
 import requests
 from datetime import date, datetime, timedelta
 import configparser
+import logging
 
 # Load configuration
 config = configparser.ConfigParser()
@@ -19,6 +20,8 @@ HOST_NAMES = list(HOSTS.keys())
 last_status = {ip: None for ip in PC_IP}
 last_seen = {ip: datetime.now() for ip in PC_IP}
 
+logging.basicConfig(filename='ais_sr.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def send_telegram_notification(message):
     """Sends a notification to Telegram."""
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -26,11 +29,11 @@ def send_telegram_notification(message):
     try:
         response = requests.post(url, data=payload)
         if response.status_code == 200:
-            print(f"Notification sent: {message}")
+            logging.info(f"Notification sent: {message}")
         else:
-            print(f"Failed to send notification: {response.status_code} - {response.text}")
+            logging.error(f"Failed to send notification: {response.status_code} - {response.text}")
     except requests.exceptions.RequestException as e:
-        print(f"Error sending notification: {e}")
+        logging.critical(f"Error sending notification: {e}")
 
 def is_device_online(ip):
     """Checks if a device is online."""
@@ -38,7 +41,7 @@ def is_device_online(ip):
         response = os.system(f"ping -c 1 {ip} > /dev/null 2>&1" if os.name != "nt" else f"ping -n 1 {ip} > nul")
         return response == 0
     except Exception as e:
-        print(f"Error pinging {ip}: {e}")
+        logging.error(f"Error pinging {ip}: {e}")
         return False
     
 def get_device_info(ip):
@@ -62,9 +65,7 @@ while True:
         if online_status:
             # Device is online
             if last_status[ip] != True:
-                # send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
-                print(f"{MESSAGE}\nStatus: UP! 📶✅\n")
-
+                send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
                 last_status[ip] = True
             # Update last seen timestamp
             last_seen[ip] = datetime.now()
@@ -72,6 +73,5 @@ while True:
             # Device is offline
             elapsed_time = datetime.now() - last_seen[ip]
             if elapsed_time > timedelta(minutes=1) and last_status[ip] != False:
-                # send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
-                print(f"{MESSAGE}\nStatus: UP! 📶✅\n")
+                send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = False
