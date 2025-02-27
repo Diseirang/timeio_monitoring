@@ -17,7 +17,7 @@ HOST_NAMES = list(HOSTS.keys())
 
 # State tracking
 last_status = {ip: None for ip in PC_IP}
-last_seen = {ip: datetime.now() for ip in PC_IP}
+timeout_counter = {ip: 0 for ip in PC_IP}
 
 os.makedirs("logs", exist_ok=True)
 logging.basicConfig(filename="logs/monitor_tsk.log", level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -61,19 +61,19 @@ while True:
         DEVICE_LOCATION = get_device_info(ip).upper()
         CURRENT_DATE = date.today().strftime('%B %d, %Y')
         CURRENT_TIME = datetime.now().strftime('%H:%M:%S %p')
+        
+        MESSAGE = f"🚨TSK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
 
         if online_status:
-            # Device is online
-            if last_status[ip] != True:
-                MESSAGE = f"🚨TSK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+            if timeout_counter[ip] > 0:
+                timeout_counter[ip] = 0
+
+            if online_status != last_status[ip]:
                 send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
-                last_status[ip] = True
-            # Update last seen timestamp
-            last_seen[ip] = datetime.now()
+                last_status[ip] = online_status 
         else:
-            # Device is offline
-            elapsed_time = datetime.now() - last_seen[ip]
-            if elapsed_time > timedelta(minutes=1) and last_status[ip] != False:
-                MESSAGE = f"🚨TSK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+            timeout_counter[ip] += 1
+
+            if timeout_counter[ip] == 5:
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
-                last_status[ip] = False
+                last_status[ip] = online_status
