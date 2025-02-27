@@ -3,6 +3,7 @@ import requests
 from datetime import date , datetime
 import configparser
 import logging
+import subprocess
 
 config = configparser.ConfigParser()
 config.read("configmtt.properties")
@@ -37,8 +38,10 @@ def send_telegram_notification(message):
 def is_device_online(ip):
     """Checks if a device is online."""
     try:
-        response = os.system(f"ping -c 1 {ip} > /dev/null 2>&1" if os.name != "nt" else f"ping -n 1 {ip} > nul")
-        return response == 0
+        # Run the ping command with -c 1 (Linux/macOS)
+        command = ["ping", "-c", "1", ip]
+        result = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return result.returncode == 0
     except Exception as e:
         logging.error(f"Error pinging {ip}: {e}")
         return False
