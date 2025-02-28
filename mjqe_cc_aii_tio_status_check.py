@@ -62,7 +62,7 @@ while True:
         CURRENT_DATE = date.today().strftime('%B %d, %Y')
         CURRENT_TIME = datetime.now().strftime('%H:%M:%S %p')
         
-        MESSAGE = f"🚨Aii-CC Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+        MESSAGE = f"🚨Aii-CC Notification Alert🚨\n\nLocation: \b{DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
 
         if online_status:
             if timeout_counter[ip] > 0:
@@ -74,6 +74,6 @@ while True:
         else:
             timeout_counter[ip] += 1
 
-            if timeout_counter[ip] == 5:
+            if timeout_counter[ip] == 10:
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = online_status
