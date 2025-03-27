@@ -6,7 +6,7 @@ import logging
 import subprocess
 
 config = configparser.ConfigParser()
-config.read("config_tak_aii.properties")
+config.read("config_tk_aii.properties")
 
 BOT_TOKEN = config["DEFAULT"]["BOT_TOKEN"]
 CHAT_ID = config["DEFAULT"]["CHAT_ID"]
@@ -20,7 +20,7 @@ last_status = {ip: None for ip in PC_IP}
 timeout_counter = {ip: 0 for ip in PC_IP}
 
 os.makedirs("logs", exist_ok=True)
-logging.basicConfig(filename="logs/tak_aii_monitoring.log", level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename="logs/tk_aii_monitoring.log", level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def send_telegram_notification(message):
     """Sends a notification to Telegram."""
@@ -62,7 +62,7 @@ while True:
         CURRENT_DATE = date.today().strftime('%B %d, %Y')
         CURRENT_TIME = datetime.now().strftime('%H:%M:%S %p')
         
-        MESSAGE = f"🚨Aii_TAK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+        MESSAGE = f"🚨Aii_TK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
 
         if online_status:
             if timeout_counter[ip] > 0:
