@@ -74,6 +74,6 @@ while True:
         else:
             timeout_counter[ip] += 1
 
-            if timeout_counter[ip] == 5:
+            if timeout_counter[ip] == 10:
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = online_status
