@@ -1,6 +1,7 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 import requests
-from datetime import date, datetime
+from datetime import date, datetime, time
 import configparser
 import logging
 import subprocess
@@ -54,26 +55,37 @@ def get_device_info(ip):
     except ValueError:
         return "Unknown Host"
     
-while True:
-    for ip in PC_IP:
-        online_status = is_device_online(ip)
-                
-        DEVICE_LOCATION = get_device_info(ip).upper()
-        CURRENT_DATE = date.today().strftime('%B %d, %Y')
-        CURRENT_TIME = datetime.now().strftime('%H:%M:%S %p')
-        
-        MESSAGE = f"🚨AIS_TAK Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+def monitor_hosts():
+    with ThreadPoolExecutor(max_workers=len(PC_IP)) as executor:
+        future_to_ip = {executor.submit(is_device_online, ip): ip for ip in PC_IP}
+        for future in as_completed(future_to_ip):
+            ip, online_status = future.result()
+            device_location = get_device_info(ip).upper()
+            current_date = date.today().strftime('%B %d, %Y')
+            current_time = datetime.now().strftime('%H:%M:%S %p')
 
-        if online_status:
-            if timeout_counter[ip] > 0:
-                timeout_counter[ip] = 0
+            message = (
+                f"🚨AIS_TAK Notification Alert🚨\n\n"
+                f"Location: {device_location}\n"
+                f"IP: {ip}\n"
+                f"Date: {current_date}\n"
+                f"Time: {current_time}"
+            )
 
-            if online_status != last_status[ip]:
-                send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
-                last_status[ip] = online_status 
-        else:
-            timeout_counter[ip] += 1
+            if online_status:
+                if timeout_counter[ip] > 0:
+                    timeout_counter[ip] = 0
 
-            if timeout_counter[ip] == 20:
-                send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
-                last_status[ip] = online_status
+                if last_status[ip] != online_status:
+                    send_telegram_notification(f"{message}\nStatus: UP! 📶✅\n")
+                    last_status[ip] = online_status
+            else:
+                timeout_counter[ip] += 1
+                if timeout_counter[ip] == 20:
+                    send_telegram_notification(f"{message}\nStatus: DOWN! ❌❌\n")
+                    last_status[ip] = online_status
+
+if __name__ == "__main__":
+    while True:
+        monitor_hosts()
+        time.sleep(5)  # Adjust the interval as needed
