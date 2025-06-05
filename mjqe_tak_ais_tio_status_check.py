@@ -1,7 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 import requests
-from datetime import date, datetime, time
+from datetime import date, datetime
+import time 
 import configparser
 import logging
 import subprocess
@@ -42,10 +43,10 @@ def is_device_online(ip):
         # Run the ping command with -c 1 (Linux/macOS)
         command = ["ping", "-c", "1", ip]
         result = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return result.returncode == 0
+        return ip, result.returncode == 0
     except Exception as e:
         print(f"Error pinging {ip}: {e}")
-        return False
+        return ip, False
     
 def get_device_info(ip):
     """Returns the host name for the given IP."""
