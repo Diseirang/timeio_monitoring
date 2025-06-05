@@ -1,6 +1,6 @@
 import os
 import requests
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 import configparser
 import logging
 import subprocess
@@ -74,6 +74,6 @@ while True:
         else:
             timeout_counter[ip] += 1
 
-            if timeout_counter[ip] == 10:
+            if timeout_counter[ip] == 20:
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = online_status
