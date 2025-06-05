@@ -81,7 +81,7 @@ def monitor_hosts():
                     last_status[ip] = online_status
             else:
                 timeout_counter[ip] += 1
-                if timeout_counter[ip] == 20:
+                if timeout_counter[ip] == 10:
                     send_telegram_notification(f"{message}\nStatus: DOWN! ❌❌\n")
                     last_status[ip] = online_status
 
