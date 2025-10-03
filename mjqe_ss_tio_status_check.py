@@ -67,20 +67,35 @@ def get_device_info(ip):
 while True:
     for ip in PC_IP:
         online_status = is_device_online(ip)
-                
+
         DEVICE_LOCATION = get_device_info(ip).upper()
         CURRENT_DATE = date.today().strftime('%B %d, %Y')
         CURRENT_TIME = datetime.now().strftime('%H:%M:%S %p')
 
         if online_status:
             if last_status[ip] != True:
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = (
+                    f"🚨TimeIO Notification Alert🚨\n\n"
+                    f"Location: {DEVICE_LOCATION}\n"
+                    f"IP: {ip}\n"
+                    f"Date: {CURRENT_DATE}\n"
+                    f"Time: {CURRENT_TIME}"
+                )
                 send_telegram_notification(f"{MESSAGE}\nStatus: UP! 📶✅\n")
                 last_status[ip] = True
+
+            # update last seen if online
             last_seen[ip] = datetime.now()
-        else:
+
+        else:  # device offline
             elapsed_time = datetime.now() - last_seen[ip]
             if elapsed_time > timedelta(minutes=1) and last_status[ip] != False:
-                MESSAGE = f"🚨TimeIO Notification Alert🚨\n\nLocation: {DEVICE_LOCATION}\nIP: {ip}\nDate: {CURRENT_DATE}\nTime: {CURRENT_TIME}"
+                MESSAGE = (
+                    f"🚨TimeIO Notification Alert🚨\n\n"
+                    f"Location: {DEVICE_LOCATION}\n"
+                    f"IP: {ip}\n"
+                    f"Date: {CURRENT_DATE}\n"
+                    f"Time: {CURRENT_TIME}"
+                )
                 send_telegram_notification(f"{MESSAGE}\nStatus: DOWN! ❌❌\n")
                 last_status[ip] = False
